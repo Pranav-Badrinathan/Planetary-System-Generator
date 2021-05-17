@@ -1,20 +1,19 @@
-/// <reference path="../libs/two.js" />
+var two;
 
 $(function(){
-    console.log("HI!");
-    console.log($("#gen").text());
-
-    var height = $(window).height();
-    var width = $(window).width();
-
-    var elem = $("#body").get();
-    var params = {width, height};
-    var two = Two(params).appendTo(elem);
-
-    $("#gen").on("click", function(){
-        var circle = two.makeCircle(innerWidth/2, innerHeight/2, 50);
-        circle.fill = '#FF8000';
-        two.update();
-        console.log("MAKE CIRCLE");
-    });
+	initTwo();
+	$("#gen").on("click", function(){
+		generate(two);
+	});
 });
+
+function initTwo(){
+	var height = $(document).height();
+    var width = $(document).width();
+
+    var elem = $("#mainDraw").get()[0];
+    var params = {width, height};
+    two = new Two(params).appendTo(elem);
+
+	generate(two);
+}
