@@ -15,26 +15,63 @@ body{
 	width: 100%;
 }
 
-#gen{
-	font-family: sans-serif;
+#optionPane{
+	margin-top: 2em;
+	width: 15.25em;
+	height: 2.25em;
+	background-color: rgba(0, 0, 0, 0.6);
+	display: none;
+}
+
+.gens{
+	font-family: Cambria, Cochin, Consolas, monospace, 'Times New Roman', serif;
 	font-size: medium;
 
-	margin: 0.6em;
+	text-align: left;
+	color: rgb(228, 228, 228);
 
-	position: absolute;
+	display:block;
+	float: left;;
+	background-color: rgba(0, 0, 0, 0.6);
 
-	background-color: orchid;
 	border-color: rgba(0, 0, 0, 0);
 	border-style: solid;
 
-	height: 40px;
-	width: 100px;
+	height: 2em;
 }
 
-#gen:hover{
-	border-color: rgb(255, 227, 254);
+.gens:hover{
+	border-color: rgb(218, 218, 218);
+	border-style: solid;
 }
 
-#gen:active{
-	background-color: rgb(206, 92, 187);
+.gens:active{
+	background-color: rgba(0, 0, 0, 0.7);
+	border-style: solid;
+}
+
+input[type=text]{
+
+	margin-top: 0.7em;
+
+	background-color: rgba(0, 0, 0, 0.8);
+	color: rgb(228, 228, 228);;
+
+	width: 10em;
+
+	border: solid;
+	border-width: thin;
+	
+	border-color: rgb(83, 83, 83);
+}
+
+input[type=checkbox]{
+	filter: grayscale(1);
+}
+
+label{
+	padding: 0.6em;
+	font-size: small;
+	font-family: Cambria, Cochin, Consolas, monospace, 'Times New Roman', serif;
+	color: rgb(228, 228, 228);;
 }

@@ -1,7 +1,8 @@
 var seed;
+var lastSeed;
 
 function generate(two) {
-	seed = cyrb53(Math.random().toString());
+	selectSeed();
 	let prng = new Math.seedrandom(seed);
 
 	var star = new Star(prng() * (16 - 0.02) + 0.02) 
@@ -15,6 +16,13 @@ function generate(two) {
 		circle.fill = '#ffe100';
 		circle.stroke = "orangered";
 	two.update();
+}
+
+function selectSeed() {
+	if($("#cseed").is(":checked")) seed = $("#seed").val();
+	else seed = cyrb53(Math.random().toString());
+
+	$("#seed").val(seed);
 }
 
 //Alpha numeric hash generator based on inputs.
