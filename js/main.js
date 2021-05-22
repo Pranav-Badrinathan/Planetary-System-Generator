@@ -22,7 +22,7 @@ function initTwo(){
     var width = $(document).width();
 
     var elem = $("#mainDraw").get()[0];
-    var params = {width, height};
+    var params = {width, height, autostart: true};
     two = new Two(params).appendTo(elem);
 
 	generate(two);

@@ -5,17 +5,15 @@ function generate(two) {
 	selectSeed();
 	let prng = new Math.seedrandom(seed);
 
-	var star = new Star(prng() * (16 - 0.02) + 0.02) 
-
 	two.clear();
 
 	two.height = $(document).height();
 	two.width = $(document).width();
 
-	var circle = two.makeCircle(two.width/2, two.height/2, 50);
-		circle.fill = '#ffe100';
-		circle.stroke = "orangered";
-	two.update();
+	var circle = two.makeCircle(two.width/2, two.height/2, 30);
+	var star = new Star(prng() * (16 - 0.02) + 0.02, circle);
+
+	addZUI(two);
 }
 
 function selectSeed() {
@@ -23,6 +21,8 @@ function selectSeed() {
 	else seed = cyrb53(Math.random().toString());
 
 	$("#seed").val(seed);
+
+	console.log(seed);
 }
 
 //Alpha numeric hash generator based on inputs.
