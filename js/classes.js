@@ -1,5 +1,7 @@
-
 class Star {
+
+	static starClass = { 0:"M", 1:"K", 2:"G", 3:"F", 4:"A", 5:"B", 6:"O" };
+
 	constructor(mass, svgRef){
 		this.svgRef = svgRef;
 
@@ -22,6 +24,30 @@ class Star {
 		let col = Star.kelvinToRGB(this.surfTemp); 
 		this.svgRef.fill = RGBToHex(col.R, col.G, col.B);
 		this.svgRef.radius *= this.diameter;
+	}
+
+	/**
+	 * Returns a number that coressponds with a class from `Star.starClass`
+	 * 
+	 * @param {number} selector A number between 0 and 1, used to calculate the weights accordingly.
+	 */
+	static weightedSize(selector) {
+		// The weights per star mass class. (All add upto 100)
+		// Class:	   M   K   G   F   A   B    O
+		let weights = [34, 25, 22, 12, 5, 1.5, 0.5];
+
+		//clamp the value between 0 and 1, and multiply by 100 to convert to percentage.
+		selector = Math.min(Math.max(selector, 0), 1) * 100;
+
+		var total = 0;
+
+		for (let i = 0; i < weights.length; i++) {
+			total += weights[i];
+			if(total >= selector) return i;
+		}
+
+		// execution should never reach here.
+		return null;
 	}
 
 	/**

@@ -1,19 +1,38 @@
 var seed;
 var lastSeed;
+var prng;
 
 function generate(two) {
 	selectSeed();
-	let prng = new Math.seedrandom(seed);
+	prng = new Math.seedrandom(seed);
 
 	two.clear();
 
 	two.height = $(document).height();
 	two.width = $(document).width();
 
-	var circle = two.makeCircle(two.width/2, two.height/2, 30);
-	var star = new Star(prng() * (16 - 0.02) + 0.02, circle);
+	generateStar();
 
 	addZUI(two);
+}
+
+function generateStar() {
+	var starClass = Star.weightedSize(prng());
+	var minMaxMassMap = {
+		M: { min: 0.02, max: 0.45 },
+		K: { min: 0.45, max: 0.8 },
+		G: { min: 0.8, max: 1.04 },
+		F: { min: 1.04, max: 1.4 },
+		A: { min: 1.4, max: 2.1 },
+		B: { min: 2.1, max: 16 },
+		O: { min: 16, max: 150 }
+	}
+
+	// Get the selected class into a variable.
+	var selClass = minMaxMassMap[Star.starClass[starClass]];
+
+	var circle = two.makeCircle(two.width/2, two.height/2, 30);
+	var star = new Star(prng() * (selClass.max - selClass.min) + selClass.min, circle);
 }
 
 function selectSeed() {
