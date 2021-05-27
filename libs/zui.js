@@ -1,3 +1,5 @@
+import Two from "./two.module.js";
+
 (function() {
 
 	var Surface = function(object) {

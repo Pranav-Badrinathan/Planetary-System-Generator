@@ -1,3 +1,5 @@
+import Two from "../libs/two.module.js";
+
 /**
  * Credits to Jono Brandel. I just copied this function off them.
  * https://codepen.io/jonobr1/pen/PobMKwb
@@ -6,7 +8,7 @@
  * 
  * @param {Two} two the `Two` object to add panning and zooming to.
  */
-function addZUI(two) {
+export function addZUI(two) {
 
     var domElement = two.renderer.domElement;
     var zui = new Two.ZUI(two.scene);

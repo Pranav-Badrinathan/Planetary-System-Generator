@@ -1,8 +1,10 @@
+import { Star } from "./classes.js";
+import { addZUI } from "./pan&Zoom.js";
+
 var seed;
-var lastSeed;
 var prng;
 
-function generate(two) {
+export function generate(two) {
 	selectSeed();
 	prng = new Math.seedrandom(seed);
 
@@ -11,13 +13,12 @@ function generate(two) {
 	two.height = $(document).height();
 	two.width = $(document).width();
 
-	generateStar();
-
+	generateStar(two);
 	addZUI(two);
 }
 
-function generateStar() {
-	var starClass = Star.weightedSize(prng());
+function generateStar(two) {
+	//the min and max values for each star mass class
 	var minMaxMassMap = {
 		M: { min: 0.02, max: 0.45 },
 		K: { min: 0.45, max: 0.8 },
@@ -28,8 +29,12 @@ function generateStar() {
 		O: { min: 16, max: 150 }
 	}
 
+	var starClass = Star.weightedSize(prng());
+
 	// Get the selected class into a variable.
 	var selClass = minMaxMassMap[Star.starClass[starClass]];
+
+	console.log(Star.starClass[starClass]);
 
 	var circle = two.makeCircle(two.width/2, two.height/2, 30);
 	var star = new Star(prng() * (selClass.max - selClass.min) + selClass.min, circle);

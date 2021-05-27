@@ -1,4 +1,4 @@
-class Star {
+export class Star {
 
 	static starClass = { 0:"M", 1:"K", 2:"G", 3:"F", 4:"A", 5:"B", 6:"O" };
 
@@ -21,7 +21,7 @@ class Star {
 	}
 
 	setDisplayProps() {
-		let col = Star.kelvinToRGB(this.surfTemp); 
+		var col = Star.kelvinToRGB(this.surfTemp);
 		this.svgRef.fill = RGBToHex(col.R, col.G, col.B);
 		this.svgRef.radius *= this.diameter;
 	}
@@ -33,8 +33,8 @@ class Star {
 	 */
 	static weightedSize(selector) {
 		// The weights per star mass class. (All add upto 100)
-		// Class:	   M   K   G   F   A   B    O
-		let weights = [34, 25, 22, 12, 5, 1.5, 0.5];
+		// Class:	    M   K   G   F   A  B  O
+		let weights = [ 23, 24, 25, 17, 8, 3, 0];
 
 		//clamp the value between 0 and 1, and multiply by 100 to convert to percentage.
 		selector = Math.min(Math.max(selector, 0), 1) * 100;
