@@ -1,21 +1,43 @@
+import { Star } from "./classes.js";
+import { addZUI } from "./pan&Zoom.js";
+
 var seed;
-var lastSeed;
+var prng;
 
-function generate(two) {
+export function generate(two) {
 	selectSeed();
-	let prng = new Math.seedrandom(seed);
-
-	var star = new Star(prng() * (16 - 0.02) + 0.02) 
+	prng = new Math.seedrandom(seed);
 
 	two.clear();
 
 	two.height = $(document).height();
 	two.width = $(document).width();
 
-	var circle = two.makeCircle(two.width/2, two.height/2, 50);
-		circle.fill = '#ffe100';
-		circle.stroke = "orangered";
-	two.update();
+	generateStar(two);
+	addZUI(two);
+}
+
+function generateStar(two) {
+	//the min and max values for each star mass class
+	var minMaxMassMap = {
+		M: { min: 0.02, max: 0.45 },
+		K: { min: 0.45, max: 0.8 },
+		G: { min: 0.8, max: 1.04 },
+		F: { min: 1.04, max: 1.4 },
+		A: { min: 1.4, max: 2.1 },
+		B: { min: 2.1, max: 16 },
+		O: { min: 16, max: 150 }
+	}
+
+	var starClass = Star.weightedSize(prng());
+
+	// Get the selected class into a variable.
+	var selClass = minMaxMassMap[Star.starClass[starClass]];
+
+	console.log(Star.starClass[starClass]);
+
+	var circle = two.makeCircle(two.width/2, two.height/2, 30);
+	var star = new Star(prng() * (selClass.max - selClass.min) + selClass.min, circle);
 }
 
 function selectSeed() {
@@ -23,6 +45,8 @@ function selectSeed() {
 	else seed = cyrb53(Math.random().toString());
 
 	$("#seed").val(seed);
+
+	console.log(seed);
 }
 
 //Alpha numeric hash generator based on inputs.

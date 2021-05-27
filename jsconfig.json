@@ -1,5 +1,5 @@
 {
     "typeAcquisition": {
-        "include": ["jquery", "jqueryui"]
+        "include": ["jquery"]
     }
 }
