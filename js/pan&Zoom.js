@@ -8,7 +8,7 @@ import Two from "../libs/two.module.js";
  * 
  * @param {Two} two the `Two` object to add panning and zooming to.
  */
-export function addZUI(two) {
+export function addZUI() {
 
     var domElement = two.renderer.domElement;
     var zui = new Two.ZUI(two.scene);

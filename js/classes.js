@@ -1,3 +1,5 @@
+import Two from "../libs/two.module.js";
+
 export class Star {
 
 	static starClass = { 0:"M", 1:"K", 2:"G", 3:"F", 4:"A", 5:"B", 6:"O" };
@@ -21,9 +23,20 @@ export class Star {
 	}
 
 	setDisplayProps() {
-		var col = Star.kelvinToRGB(this.surfTemp);
-		this.svgRef.fill = RGBToHex(col.R, col.G, col.B);
+		this.svgRef.stroke = "transparent";
 		this.svgRef.radius *= this.diameter;
+
+		var col = Star.kelvinToRGB(this.surfTemp);
+		var rGrad = two.makeRadialGradient(
+			0,0,
+			this.svgRef.radius,
+			// new Two.Stop(0, "white"),
+			new Two.Stop(0, RGBToHex(col.R, col.G, col.B)),
+			// new Two.Stop(0.95, "#57a8eb"),
+			// new Two.Stop(1, "#379bed"),
+		);
+
+		this.svgRef.fill = rGrad;
 	}
 
 	/**

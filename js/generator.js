@@ -4,7 +4,7 @@ import { addZUI } from "./pan&Zoom.js";
 var seed;
 var prng;
 
-export function generate(two) {
+export function generate() {
 	selectSeed();
 	prng = new Math.seedrandom(seed);
 
@@ -13,11 +13,11 @@ export function generate(two) {
 	two.height = $(document).height();
 	two.width = $(document).width();
 
-	generateStar(two);
-	addZUI(two);
+	genSystem(generateStar());
+	addZUI();
 }
 
-function generateStar(two) {
+function generateStar() {
 	//the min and max values for each star mass class
 	var minMaxMassMap = {
 		M: { min: 0.02, max: 0.45 },
@@ -37,7 +37,16 @@ function generateStar(two) {
 	console.log(Star.starClass[starClass]);
 
 	var circle = two.makeCircle(two.width/2, two.height/2, 30);
-	var star = new Star(prng() * (selClass.max - selClass.min) + selClass.min, circle);
+	return new Star(prng() * (selClass.max - selClass.min) + selClass.min, circle);
+}
+
+function genSystem(star){
+	var precision = 5;
+	var innerLimit = round(star.mass * 0.1, precision); //Value in AU (1 AU = 149600000 km / 1.496e+8 km / 1.496 * 10^8 km)
+	var outerLimit = round(star.mass * 40, precision); //Value in AU
+	var frostLine = round(Math.sqrt(star.luminosity) * 4.85, precision); //Value in AU
+
+	console.log(`inner:${innerLimit} AU, outer:${outerLimit} AU, Frost:${frostLine}`);
 }
 
 function selectSeed() {
@@ -61,3 +70,7 @@ const cyrb53 = function(str, seed = 0) {
     h2 = Math.imul(h2 ^ (h2>>>16), 2246822507) ^ Math.imul(h1 ^ (h1>>>13), 3266489909);
     return (h2>>>0).toString(16).padStart(8,0)+(h1>>>0).toString(16).padStart(8,0);
 };
+
+function round(num, precision){
+	return +(Math.round(num + `e+${precision}`)  + `e-${precision}`);
+}
