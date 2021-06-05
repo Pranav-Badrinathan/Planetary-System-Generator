@@ -47,7 +47,7 @@ export class Star {
 	static weightedSize(selector) {
 		// The weights per star mass class. (All add upto 100)
 		// Class:	    M   K   G   F   A  B  O
-		let weights = [ 23, 24, 25, 17, 8, 3, 0];
+		const weights = [ 23, 24, 25, 17, 8, 3, 0 ];
 
 		//clamp the value between 0 and 1, and multiply by 100 to convert to percentage.
 		selector = Math.min(Math.max(selector, 0), 1) * 100;

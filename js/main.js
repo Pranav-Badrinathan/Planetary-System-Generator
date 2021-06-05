@@ -1,8 +1,6 @@
 import { generate } from "./generator.js";
 import Two from "../libs/two.module.js";
 
-window.two;
-
 $(function(){
 	initTwo();
 
