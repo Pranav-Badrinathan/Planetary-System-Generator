@@ -28,7 +28,7 @@ export class Star {
 			0,0,
 			this.svgRef.radius,
 			// new Two.Stop(0, "white"),
-			new Two.Stop(0, RGBToHex(col.R, col.G, col.B)),
+			new Two.Stop(0, Util.RGBToHex(col.R, col.G, col.B)),
 			// new Two.Stop(0.95, "#57a8eb"),
 			// new Two.Stop(1, "#379bed"),
 		);
