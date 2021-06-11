@@ -1,4 +1,5 @@
 import Two from "../libs/two.module.js";
+import * as Util from "../js/utilities.js"
 
 export class Star {
 
@@ -15,11 +16,7 @@ export class Star {
 
 		this.setDisplayProps();
 
-		console.log(this.mass + " : "
-					+ this.luminosity + " : "
-					+ this.diameter + " : "
-					+ this.surfTemp + " : "
-					+ this.lifetime);
+		console.log(`${this.mass} : ${this.luminosity} : ${this.diameter} : ${this.surfTemp} : ${this.lifetime}`);
 	}
 
 	setDisplayProps() {
@@ -94,14 +91,13 @@ export class Star {
 	}
 }
 
-function RGBToHex(r, g, b) {
-	r = r.toString(16);
-	g = g.toString(16);
-	b = b.toString(16);
-  
-	r = r.length === 1 ? "0" + r : r;
-	g = g.length === 1 ? "0" + g : g;
-	b = b.length === 1 ? "0" + b : b;
+export class System {
+	constructor(star, orbits, innerLimit, outerLimit, frostLine) {
+		this.star = star;
+		this.orbits = orbits;
+		this.innerLimit = innerLimit //Value in AU (1 AU = 149600000 km / 1.496e+8 km / 1.496 * 10^8 km)
+		this.outerLimit = outerLimit //Value in AU
+		this.frostLine = frostLine //Value in AU
+	}
+}
 
-	return "#" + r + g + b;
-  }

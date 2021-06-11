@@ -1,8 +1,10 @@
-import { Star } from "./classes.js";
+import { Star, System } from "./classes.js";
 import { addZUI } from "./pan&Zoom.js";
+import * as Util from "./utilities.js"
 
 var seed;
 var prng;
+var system;
 const precision = 5;
 
 export function generate() {
@@ -14,7 +16,8 @@ export function generate() {
 	two.height = $(document).height();
 	two.width = $(document).width();
 
-	genSystem(generateStar());
+	system = genSystem();
+
 	addZUI();
 }
 
@@ -38,26 +41,28 @@ function generateStar() {
 	console.log(Star.starClass[starClass]);
 
 	var circle = two.makeCircle(two.width/2, two.height/2, 30);
-	return new Star(randScale(selClass.min, selClass.max), circle);
+	return new Star(Util.numScale(selClass.min, selClass.max, prng()), circle);
 }
 
-//TODO: Make this another type alongside star. Will be useful to access everything in 1 variable
-function genSystem(star){
-	const innerLimit = round(star.mass * 0.1, precision); //Value in AU (1 AU = 149600000 km / 1.496e+8 km / 1.496 * 10^8 km)
-	const outerLimit = round(star.mass * 40, precision); //Value in AU
-	const frostLine = round(Math.sqrt(star.luminosity) * 4.85, precision); //Value in AU
+function genSystem(){
+	const star = generateStar();
+	const innerLimit = Util.round(star.mass * 0.1, precision); //Value in AU (1 AU = 149600000 km / 1.496e+8 km / 1.496 * 10^8 km)
+	const outerLimit = Util.round(star.mass * 40, precision); //Value in AU
+	const frostLine = Util.round(Math.sqrt(star.luminosity) * 4.85, precision); //Value in AU
 
 	//The distance from the star for the orbit
-	var orbits = calculateOrbits(frostLine, innerLimit, outerLimit, star.svgRef.radius);
+	const orbits = calculateOrbits(frostLine, innerLimit, outerLimit, star.svgRef.radius);
 
 	console.table(orbits);
 
 	console.log(`inner:${innerLimit} AU, outer:${outerLimit} AU, Frost:${frostLine}`);
+
+	return new System(star, orbits, innerLimit, outerLimit, frostLine);
 }
 
 function selectSeed() {
 	if($("#cseed").is(":checked")) seed = $("#seed").val();
-	else seed = cyrb53(Math.random().toString());
+	else seed = Util.cyrb53(Math.random().toString());
 
 	$("#seed").val(seed);
 
@@ -76,13 +81,13 @@ function selectSeed() {
  */
 function calculateOrbits(frost, inner, outer, starRad){
 	//Create the orbit array, initializing it with the orbit of the gas giant nearest to the frost line.
-	var orbits = [frost + round((prng() + 0.5), precision)];
+	var orbits = [frost + Util.round(Util.numScale(0.4, 1, prng()), precision)];
 	var num;
 
 	//Calculate the orbits moving outwards from the initial gas giant
 	var i = 0;
 	while (true) {
-	 	num = round(randScale(1.4, 2.2), precision);
+	 	num = Util.round(Util.numScale(1.4, 2.2, prng()), precision);
 		
 		//make sure that the orbit doesn't excede the outer limit and is at least 0.15AU away from the previous orbit 
 	 	if(orbits[i] * num < outer && (orbits[i] * num - orbits[i]) > 0.15) orbits.push(orbits[i] * num);
@@ -92,51 +97,17 @@ function calculateOrbits(frost, inner, outer, starRad){
 
 	//Calculate the orbits moving inwards from the initial gas giant
 	while (true) {
-	 	num = round(randScale(1.4, 2.2), precision);
+	 	num = Util.round(Util.numScale(1.4, 2.2, prng()), precision);
 
 		//make sure that the orbit doesn't cross the inner limit and is at least 0.15AU away from the previous orbit
 	 	if(orbits[0] / num > inner && (orbits[0] - orbits[0] / num) > 0.15) orbits.unshift(orbits[0] / num);
 		else break;
 	}
 
-	for (let i = 0; i < orbits.length; i++) {
-		var a = two.makeCircle(two.width/2, two.height/2, starRad * (orbits[i] + 1));
+	for (let j = 0; j < orbits.length; j++) {
+		var a = two.makeCircle(two.width/2, two.height/2, starRad * (orbits[j] + 1));
 		a.fill = "transparent";
-		a.stroke = "white";
+		a.stroke = j==orbits.length-i-1 ? "#fa0015":"white";
 	}
-
-	console.log("heretoo")
 	return orbits;
-}
-
-//Alpha numeric hash generator based on inputs.
-const cyrb53 = function(str, seed = 0) {
-    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
-    for (let i = 0, ch; i < str.length; i++) {
-        ch = str.charCodeAt(i);
-        h1 = Math.imul(h1 ^ ch, 2654435761);
-        h2 = Math.imul(h2 ^ ch, 1597334677);
-    }
-    h1 = Math.imul(h1 ^ (h1>>>16), 2246822507) ^ Math.imul(h2 ^ (h2>>>13), 3266489909);
-    h2 = Math.imul(h2 ^ (h2>>>16), 2246822507) ^ Math.imul(h1 ^ (h1>>>13), 3266489909);
-    return (h2>>>0).toString(16).padStart(8,0)+(h1>>>0).toString(16).padStart(8,0);
-};
-
-/**
- * 
- * @param {number} num number to round
- * @param {number} precision number of decimal places to round to
- * @returns rounded number
- */
-function round(num, precision){
-	return +(Math.round(num + `e+${precision}`)  + `e-${precision}`);
-}
-
-/**
- * returns a random number between the min and max values provided
- * @param {number} min minimum value of output
- * @param {number} max maximum value of output
- */
-function randScale(min, max){
-	return (prng() * (max - min) + min);
 }
