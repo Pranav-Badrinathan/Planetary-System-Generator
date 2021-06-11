@@ -1,3 +1,6 @@
+import Two from "../libs/two.module.js";
+import * as Util from "../js/utilities.js"
+
 export class Star {
 
 	static starClass = { 0:"M", 1:"K", 2:"G", 3:"F", 4:"A", 5:"B", 6:"O" };
@@ -13,17 +16,24 @@ export class Star {
 
 		this.setDisplayProps();
 
-		console.log(this.mass + " : "
-					+ this.luminosity + " : "
-					+ this.diameter + " : "
-					+ this.surfTemp + " : "
-					+ this.lifetime);
+		console.log(`${this.mass} : ${this.luminosity} : ${this.diameter} : ${this.surfTemp} : ${this.lifetime}`);
 	}
 
 	setDisplayProps() {
-		var col = Star.kelvinToRGB(this.surfTemp);
-		this.svgRef.fill = RGBToHex(col.R, col.G, col.B);
+		this.svgRef.stroke = "transparent";
 		this.svgRef.radius *= this.diameter;
+
+		var col = Star.kelvinToRGB(this.surfTemp);
+		var rGrad = two.makeRadialGradient(
+			0,0,
+			this.svgRef.radius,
+			// new Two.Stop(0, "white"),
+			new Two.Stop(0, RGBToHex(col.R, col.G, col.B)),
+			// new Two.Stop(0.95, "#57a8eb"),
+			// new Two.Stop(1, "#379bed"),
+		);
+
+		this.svgRef.fill = rGrad;
 	}
 
 	/**
@@ -34,7 +44,7 @@ export class Star {
 	static weightedSize(selector) {
 		// The weights per star mass class. (All add upto 100)
 		// Class:	    M   K   G   F   A  B  O
-		let weights = [ 23, 24, 25, 17, 8, 3, 0];
+		const weights = [ 23, 24, 25, 17, 8, 3, 0 ];
 
 		//clamp the value between 0 and 1, and multiply by 100 to convert to percentage.
 		selector = Math.min(Math.max(selector, 0), 1) * 100;
@@ -81,14 +91,13 @@ export class Star {
 	}
 }
 
-function RGBToHex(r, g, b) {
-	r = r.toString(16);
-	g = g.toString(16);
-	b = b.toString(16);
-  
-	r = r.length === 1 ? "0" + r : r;
-	g = g.length === 1 ? "0" + g : g;
-	b = b.length === 1 ? "0" + b : b;
+export class System {
+	constructor(star, orbits, innerLimit, outerLimit, frostLine) {
+		this.star = star;
+		this.orbits = orbits;
+		this.innerLimit = innerLimit //Value in AU (1 AU = 149600000 km / 1.496e+8 km / 1.496 * 10^8 km)
+		this.outerLimit = outerLimit //Value in AU
+		this.frostLine = frostLine //Value in AU
+	}
+}
 
-	return "#" + r + g + b;
-  }

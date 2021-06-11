@@ -1,12 +1,10 @@
 import { generate } from "./generator.js";
 import Two from "../libs/two.module.js";
 
-var two;
-
 $(function(){
 	initTwo();
 
-	update();
+	//update();
 
 	$("#gen").on("click", function(){
 		//Todo: Read from a gen profile for the selected settings
@@ -24,13 +22,13 @@ $(function(){
 
 function initTwo(){
     var elem = $("#mainDraw").get()[0];
-    two = new Two({ fullscreen: true, autostart: true }).appendTo(elem);
+    window.two = new Two({ fullscreen: true, autostart: true }).appendTo(elem);
 
-	generate(two);
+	generate();
 }
 
-function update(){
-	window.requestAnimationFrame(update);
+// function update(){
+// 	window.requestAnimationFrame(update);
 
-	$("path").css("stroke-width", "0");
-}
+// 	$("path").css("stroke-width", "0");
+// }

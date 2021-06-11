@@ -1,10 +1,13 @@
-import { Star } from "./classes.js";
+import { Star, System } from "./classes.js";
 import { addZUI } from "./pan&Zoom.js";
+import * as Util from "./utilities.js"
 
 var seed;
 var prng;
+var system;
+const precision = 5;
 
-export function generate(two) {
+export function generate() {
 	selectSeed();
 	prng = new Math.seedrandom(seed);
 
@@ -13,13 +16,14 @@ export function generate(two) {
 	two.height = $(document).height();
 	two.width = $(document).width();
 
-	generateStar(two);
-	addZUI(two);
+	system = genSystem();
+
+	addZUI();
 }
 
-function generateStar(two) {
+function generateStar() {
 	//the min and max values for each star mass class
-	var minMaxMassMap = {
+	const minMaxMassMap = {
 		M: { min: 0.02, max: 0.45 },
 		K: { min: 0.45, max: 0.8 },
 		G: { min: 0.8, max: 1.04 },
@@ -37,27 +41,73 @@ function generateStar(two) {
 	console.log(Star.starClass[starClass]);
 
 	var circle = two.makeCircle(two.width/2, two.height/2, 30);
-	var star = new Star(prng() * (selClass.max - selClass.min) + selClass.min, circle);
+	return new Star(Util.numScale(selClass.min, selClass.max, prng()), circle);
+}
+
+function genSystem(){
+	const star = generateStar();
+	const innerLimit = Util.round(star.mass * 0.1, precision); //Value in AU (1 AU = 149600000 km / 1.496e+8 km / 1.496 * 10^8 km)
+	const outerLimit = Util.round(star.mass * 40, precision); //Value in AU
+	const frostLine = Util.round(Math.sqrt(star.luminosity) * 4.85, precision); //Value in AU
+
+	//The distance from the star for the orbit
+	const orbits = calculateOrbits(frostLine, innerLimit, outerLimit, star.svgRef.radius);
+
+	console.table(orbits);
+
+	console.log(`inner:${innerLimit} AU, outer:${outerLimit} AU, Frost:${frostLine}`);
+
+	return new System(star, orbits, innerLimit, outerLimit, frostLine);
 }
 
 function selectSeed() {
 	if($("#cseed").is(":checked")) seed = $("#seed").val();
-	else seed = cyrb53(Math.random().toString());
+	else seed = Util.cyrb53(Math.random().toString());
 
 	$("#seed").val(seed);
 
 	console.log(seed);
 }
 
-//Alpha numeric hash generator based on inputs.
-const cyrb53 = function(str, seed = 0) {
-    let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
-    for (let i = 0, ch; i < str.length; i++) {
-        ch = str.charCodeAt(i);
-        h1 = Math.imul(h1 ^ ch, 2654435761);
-        h2 = Math.imul(h2 ^ ch, 1597334677);
-    }
-    h1 = Math.imul(h1 ^ (h1>>>16), 2246822507) ^ Math.imul(h2 ^ (h2>>>13), 3266489909);
-    h2 = Math.imul(h2 ^ (h2>>>16), 2246822507) ^ Math.imul(h1 ^ (h1>>>13), 3266489909);
-    return (h2>>>0).toString(16).padStart(8,0)+(h1>>>0).toString(16).padStart(8,0);
-};
+/**
+ * Calculates all stable orbits around the host star based on it's 
+ * inner limit, outer limit, and frost line
+ * 
+ * @param {number} frost frost line
+ * @param {number} inner inner limit
+ * @param {number} outer outer limit
+ * @param {number} starRad
+ * @returns 
+ */
+function calculateOrbits(frost, inner, outer, starRad){
+	//Create the orbit array, initializing it with the orbit of the gas giant nearest to the frost line.
+	var orbits = [frost + Util.round(Util.numScale(0.4, 1, prng()), precision)];
+	var num;
+
+	//Calculate the orbits moving outwards from the initial gas giant
+	var i = 0;
+	while (true) {
+	 	num = Util.round(Util.numScale(1.4, 2.2, prng()), precision);
+		
+		//make sure that the orbit doesn't excede the outer limit and is at least 0.15AU away from the previous orbit 
+	 	if(orbits[i] * num < outer && (orbits[i] * num - orbits[i]) > 0.15) orbits.push(orbits[i] * num);
+		else break;
+	 	i++;
+	}
+
+	//Calculate the orbits moving inwards from the initial gas giant
+	while (true) {
+	 	num = Util.round(Util.numScale(1.4, 2.2, prng()), precision);
+
+		//make sure that the orbit doesn't cross the inner limit and is at least 0.15AU away from the previous orbit
+	 	if(orbits[0] / num > inner && (orbits[0] - orbits[0] / num) > 0.15) orbits.unshift(orbits[0] / num);
+		else break;
+	}
+
+	for (let j = 0; j < orbits.length; j++) {
+		var a = two.makeCircle(two.width/2, two.height/2, starRad * (orbits[j] + 1));
+		a.fill = "transparent";
+		a.stroke = j==orbits.length-i-1 ? "#fa0015":"white";
+	}
+	return orbits;
+}
