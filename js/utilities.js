@@ -50,3 +50,14 @@ export function RGBToHex(r, g, b) {
 
 	return "#" + r + g + b;
 }
+
+Array.prototype.populate = function (x, y) {
+	if(!Array.isArray(x) && !Array.isArray(y)){
+		this.push({x: x, y: y});
+	}
+	else if (Array.isArray(x) && Array.isArray(y)){
+		if(x.length !== y.length) 
+			console.warn(`x and y array lengths are different! x is ${x.length}, and y is ${y.length}.`);
+		for (let i = 0; i < x.length; i++) this.push({x: x[i], y: y[i]});
+	} 
+}

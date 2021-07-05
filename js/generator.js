@@ -1,4 +1,4 @@
-import { Star, System } from "./classes.js";
+import { Planet, Star, System } from "./classes.js";
 import { addZUI } from "./pan&Zoom.js";
 import * as Util from "./utilities.js"
 
@@ -17,6 +17,7 @@ export function generate() {
 	two.width = $(document).width();
 
 	system = genSystem();
+	new Planet(1);
 
 	addZUI();
 }
