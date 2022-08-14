@@ -111,8 +111,12 @@ R = > 0.03 R⊕
 Guidelines (Gas Giant): (Can use clamped random Mass and Radius values.
 						 The density will then determine the composition)
 M = 10M⊕ to 13Mj (Jupiter mass)
-R = (for 2-13 Mj) ~1 Rj. 
-	(for < 2Mj, or Puffy giants)	>1 Rj.
+R = (for 2-13 Mj) ~1Rj. 
+
+Guidelines (Puffy Giant)
+M = < 2Mj
+R = 1Rj to 2.5Rj
+d = > 0.03 g/cm2
 
 Guidelines (Gas Dwarf):
 M = 1 M⊕ to 20 M⊕
@@ -129,7 +133,7 @@ g = (0.68 - 1.5 g⊕)  or (0.4 - 1.6 g⊕)
 */
 export class Planet {
 	
-	static planetType = {ROCKY:0, WATER:1, ICEGIANT:2, GASGIANT:3}
+	static planetType = {TERRESTERIAL:0, WATER:1, ICEGIANT:2, GASGIANT:3, GASDWARF:4}
 	static lines;
 
 	constructor(mass, type){
@@ -152,7 +156,6 @@ export class Planet {
 		changing it in a different function will result in the changed val. Different from value type vars (default)
 		where all vars are stored in memory seperately, regardless of if they are the same one passed b/w
 		functions.
-
 		*/
 		$.when(this.initLine()).done(function(data){
 			Planet.lines = data;
@@ -167,7 +170,14 @@ export class Planet {
 		return toRet.promise();
 	}
 
-	selectPlanetProps = function(){
-		console.log(Planet.lines);
+	//using lambada-like definition here so that the value of 'this' remains to this instance of the class,
+	//and not the function selectPlanetProps. Could have used .bind(), but this is much cleaner.
+	selectPlanetProps = () => {
+		this.getRadiusFromLine(Planet.lines.line1, 0.2);
+	}
+
+	getRadiusFromLine(line, mass)
+	{
+		console.log(line[0]);
 	}
 }

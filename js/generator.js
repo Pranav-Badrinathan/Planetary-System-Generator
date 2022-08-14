@@ -9,6 +9,8 @@ const precision = 5;
 
 export function generate() {
 	selectSeed();
+	
+	// Source: //cdnjs.cloudflare.com/ajax/libs/seedrandom/2.3.10/seedrandom.min.js
 	prng = new Math.seedrandom(seed);
 
 	two.clear();
@@ -22,7 +24,7 @@ export function generate() {
 	addZUI();
 }
 
-function generateStar() {
+function genStar() {
 	//the min and max values for each star mass class
 	const minMaxMassMap = {
 		M: { min: 0.02, max: 0.45 },
@@ -46,7 +48,7 @@ function generateStar() {
 }
 
 function genSystem(){
-	const star = generateStar();
+	const star = genStar();
 	const innerLimit = Util.round(star.mass * 0.1, precision); //Value in AU (1 AU = 149600000 km / 1.496e+8 km / 1.496 * 10^8 km)
 	const outerLimit = Util.round(star.mass * 40, precision); //Value in AU
 	const frostLine = Util.round(Math.sqrt(star.luminosity) * 4.85, precision); //Value in AU
@@ -109,6 +111,7 @@ function calculateOrbits(frost, inner, outer, starRad){
 		var a = two.makeCircle(two.width/2, two.height/2, starRad * (orbits[j] + 1));
 		a.fill = "transparent";
 		a.stroke = j==orbits.length-i-1 ? "#fa0015":"white";
+		a.linewidth = 0.04 * starRad;
 	}
 	return orbits;
 }

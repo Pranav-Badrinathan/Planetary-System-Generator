@@ -1,4 +1,8 @@
-//Alpha numeric hash generator based on inputs.
+/**
+ * Alpha numeric hash generator based on inputs.
+ * @param {string} str string value to generate hash with.
+ * @returns A hash generated from the input string value. Same input value results in same hash.
+ */
 export const cyrb53 = function(str, seed = 0) {
     let h1 = 0xdeadbeef ^ seed, h2 = 0x41c6ce57 ^ seed;
     for (let i = 0, ch; i < str.length; i++) {
